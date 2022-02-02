@@ -1,2 +1,2 @@
-# c(configuration) clashc(ClashX)
+# c(Configuration) clashc(ClashX)
 Aggregate configuration for ClashX

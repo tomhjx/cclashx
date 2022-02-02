@@ -1,0 +1,17 @@
+version: '3.5'
+services:
+  cclashx:
+    image: golang:1.17.5-bullseye
+    working_dir: /work/src
+    environment:
+      GOPROXY: "https://goproxy.cn,direct"
+    cap_add:
+      - ALL
+    volumes:
+      - .:/work
+      - ./out:/work/out
+      - ~/Work/workspace/go:/go
+networks:
+  default:
+    name: lab
+

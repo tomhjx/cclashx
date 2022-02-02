@@ -26,6 +26,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build and Push
         run: |
-          DOCKER_RELEASE_TAG="tomhjx/cclashx:${GITHUB_REF#refs/*/}"
-          docker build ${{ github.workspace }} -t $DOCKER_RELEASE_TAG
-          docker push $DOCKER_RELEASE_TAG
+          DOCKER_RELEASE_TAG="tomhjx/cclashx:${GITHUB_REF#refs/*/v}"
+          echo $DOCKER_RELEASE_TAG
+          # docker build ${{ github.workspace }} -t $DOCKER_RELEASE_TAG
+          # docker push $DOCKER_RELEASE_TAG

@@ -2,11 +2,16 @@ package core
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strings"
 	"sync"
 
 	"github.com/tomhjx/gogfw"
+)
+
+const (
+	VERSION = "1.0.1"
 )
 
 type Processor struct{}
@@ -102,20 +107,21 @@ func addProxies(t *target, srcp string) (res bool, err error) {
 
 func (i *Processor) Run() {
 	var (
-		srcps stringsFlag
-		outp  string
-		tplp  string
-		help  bool
-		wg    sync.WaitGroup
+		srcps    stringsFlag
+		outp     string
+		tplp     string
+		showHelp bool
+		wg       sync.WaitGroup
 	)
 	flag.Var(&srcps, "s", "source's clashx configuration yaml url.")
 	flag.StringVar(&outp, "o", "/work/out/clashx.yaml", "output clashx configuration yaml file path.")
 	flag.StringVar(&tplp, "tpl", "/work/resources/tpl.yaml", "templet clashx configuration yaml file path.")
-	flag.BoolVar(&help, "h", false, "this help")
+	flag.BoolVar(&showHelp, "h", false, "this help")
 
 	flag.Parse()
 
-	if help {
+	if showHelp {
+		fmt.Printf("version %s\n", VERSION)
 		flag.Usage()
 		return
 	}

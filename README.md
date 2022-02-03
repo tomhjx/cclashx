@@ -7,6 +7,7 @@ Aggregate configuration for ClashX
 all proxies source:
 
 http://example01.com/clashx.yaml
+
 https://example02.com/clashx.yaml
 
 my configuration template:

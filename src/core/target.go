@@ -91,7 +91,6 @@ func (i *target) persist(dstpath string) (res bool, err error) {
 	}
 	i.ProxyGroups = append(i.ProxyGroups, autopg, cpg, hijackingpg)
 
-	i.addRule([]string{"GEOIP", "CN", "DIRECT"})
 	i.addRule([]string{"MATCH", "DIRECT"})
 
 	writer, err := os.OpenFile(dstpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)

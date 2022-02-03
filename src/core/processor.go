@@ -21,21 +21,22 @@ func NewProcessor() *Processor {
 }
 
 type Proxy struct {
-	Name      string
-	Type      string
-	Server    string
-	Port      uint16
-	Password  string
-	Sni       string
-	AlterId   uint8 `yaml:"alterId"`
-	Cipher    string
-	Network   string
-	Tls       bool
-	Uuid      string
-	WsHeaders struct {
+	Name           string
+	Type           string
+	Server         string
+	Port           uint16
+	Password       string `yaml:"password,omitempty"`
+	Sni            string `yaml:"sni,omitempty"`
+	AlterId        uint8  `yaml:"alterId"`
+	Cipher         string `yaml:"cipher,omitempty"`
+	Network        string `yaml:"network,omitempty"`
+	Tls            bool
+	SkipCertVerify bool   `yaml:"skip-cert-verify"`
+	Uuid           string `yaml:"uuid,omitempty"`
+	WsHeaders      struct {
 		Host string `yaml:"Host"`
-	} `yaml:"ws-headers"`
-	WsPath string `yaml:"ws-path"`
+	} `yaml:"ws-headers,omitempty"`
+	WsPath string `yaml:"ws-path,omitempty"`
 }
 
 type Proxyg struct {

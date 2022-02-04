@@ -20,6 +20,7 @@ func NewProcessor() *Processor {
 	return &Processor{}
 }
 
+// https://github.com/Dreamacro/clash/wiki/configuration
 type Proxy struct {
 	Name           string
 	Type           string
@@ -33,10 +34,17 @@ type Proxy struct {
 	Tls            bool
 	SkipCertVerify bool   `yaml:"skip-cert-verify"`
 	Uuid           string `yaml:"uuid,omitempty"`
+	Obfs           string `yaml:"obfs,omitempty"`
+	Protocol       string `yaml:"protocol,omitempty"`
 	WsHeaders      struct {
-		Host string `yaml:"Host"`
+		Host string `yaml:"Host,omitempty"`
 	} `yaml:"ws-headers,omitempty"`
-	WsPath string `yaml:"ws-path,omitempty"`
+	WsPath     string `yaml:"ws-path,omitempty"`
+	Plugin     string `yaml:"plugin,omitempty"`
+	PluginOpts struct {
+		Mode string `yaml:"mode,omitempty"`
+		Host string `yaml:"host,omitempty"`
+	} `yaml:"plugin-opts,omitempty"`
 }
 
 type Proxyg struct {

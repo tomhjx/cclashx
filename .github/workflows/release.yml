@@ -29,3 +29,6 @@ jobs:
           DOCKER_RELEASE_TAG="tomhjx/cclashx:${GITHUB_REF#refs/*/v}"
           docker build ${{ github.workspace }} -t $DOCKER_RELEASE_TAG
           docker push $DOCKER_RELEASE_TAG
+          DOCKER_STABLE_TAG="tomhjx/cclashx:stable"
+          docker tag $DOCKER_RELEASE_TAG $DOCKER_STABLE_TAG
+          docker push $DOCKER_STABLE_TAG

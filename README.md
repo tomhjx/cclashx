@@ -1,6 +1,9 @@
 # c(Configuration) clashc(ClashX)
 Aggregate configuration for ClashX
 
+[![GitHub release](https://img.shields.io/github/release/tomhjx/cclashx.svg)](https://github.com/tomhjx/cclashx/releases)
+[![GitHub license](https://img.shields.io/github/license/tomhjx/cclashx.svg)](https://github.com/tomhjx/cclashx/blob/master/LICENSE)
+
 
 ## Example
 

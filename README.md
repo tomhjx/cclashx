@@ -1,4 +1,4 @@
-# c(Configuration) clashc(ClashX)
+# c(Configuration) clashx(ClashX)
 Aggregate configuration for ClashX
 
 [![GitHub release](https://img.shields.io/github/release/tomhjx/cclashx.svg)](https://github.com/tomhjx/cclashx/releases)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"strings"
 
@@ -44,6 +45,11 @@ func newTarget(def string) (t *target, err error) {
 }
 
 func (i *target) addProxy(p *Proxy) {
+	_, err := net.ResolveIPAddr("ip", p.Server)
+	if err == nil {
+		return
+	}
+
 	if p == nil {
 		return
 	}

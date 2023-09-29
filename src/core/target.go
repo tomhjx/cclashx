@@ -8,9 +8,24 @@ import (
 	"net"
 	"os"
 	"strings"
+	"sync"
 
 	"gopkg.in/yaml.v3"
 )
+
+type persistItemType string
+
+const (
+	proxyPersistItemType          persistItemType = "proxy"
+	rulesPersistItemType          persistItemType = "rules"
+	completeSignalPersistItemType persistItemType = "completeSignal"
+)
+
+type persistItem struct {
+	Type  persistItemType
+	Proxy *Proxy
+	Rules []string
+}
 
 type target struct {
 	Port               uint16
@@ -25,7 +40,8 @@ type target struct {
 	Proxies     []*Proxy
 	ProxyGroups []*Proxyg `yaml:"proxy-groups"`
 	Rules       []string
-	proxyExists map[string]bool
+	persistQ    chan persistItem
+	proxyExists sync.Map
 }
 
 func newTarget(def string) (t *target, err error) {
@@ -38,13 +54,23 @@ func newTarget(def string) (t *target, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	t.proxyExists = make(map[string]bool)
+	t.persistQ = make(chan persistItem)
 
 	return t, nil
 }
 
 func (i *target) addProxy(p *Proxy) {
+	log.Printf("persist proxy: %s, %s, %d", p.Name, p.Server, p.Port)
+	i.Proxies = append(i.Proxies, p)
+}
+
+func (i *target) prePersistProxy(p *Proxy) {
+	pxykey := fmt.Sprintf("%s:%d", p.Server, p.Port)
+	if _, ok := i.proxyExists.Load(pxykey); ok {
+		return
+	}
+	i.proxyExists.Store(pxykey, true)
+
 	_, err := net.ResolveIPAddr("ip", p.Server)
 	if err != nil {
 		return
@@ -53,17 +79,17 @@ func (i *target) addProxy(p *Proxy) {
 	if p == nil {
 		return
 	}
-	pxykey := fmt.Sprintf("%s:%d", p.Server, p.Port)
-	log.Printf("add proxy: %s, %s, %d", p.Name, p.Server, p.Port)
-	if i.proxyExists[pxykey] {
-		return
-	}
-	i.proxyExists[pxykey] = true
-	i.Proxies = append(i.Proxies, p)
+	log.Printf("put proxy into persist queue: %s, %s, %d", p.Name, p.Server, p.Port)
+	i.persistQ <- persistItem{Type: proxyPersistItemType, Proxy: p}
 }
 
 func (i *target) addRule(rule []string) {
+	log.Println("persist rule: ", rule)
 	i.Rules = append(i.Rules, strings.Join(rule, ","))
+}
+
+func (i *target) prePersistRule(rule []string) {
+	i.persistQ <- persistItem{Type: rulesPersistItemType, Rules: rule}
 }
 
 func (i *target) persist(dstpath string) (res bool, err error) {
@@ -111,4 +137,27 @@ func (i *target) persist(dstpath string) (res bool, err error) {
 	}
 	encoder.Close()
 	return true, nil
+}
+
+func (i *target) finishNotifyPersist() {
+	log.Println("finish signal")
+	close(i.persistQ)
+}
+
+func (i *target) consumePersistQ(dstpath string) {
+	for {
+		pi, ok := <-i.persistQ
+		if !ok {
+			i.persist(dstpath)
+			return
+		}
+		switch pi.Type {
+		case proxyPersistItemType:
+			i.addProxy(pi.Proxy)
+		case rulesPersistItemType:
+			i.addRule(pi.Rules)
+		default:
+			return
+		}
+	}
 }

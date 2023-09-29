@@ -90,7 +90,7 @@ func addGFWRules(i *target) (res bool, err error) {
 		case gogfw.ITEM_TYPE_DOMAIN_KEYWORD:
 			rtype = "DOMAIN-KEYWORD"
 		}
-		i.addRule([]string{rtype, rval, "PROXY"})
+		i.prePersistRule([]string{rtype, rval, "PROXY"})
 	}
 	return true, nil
 }
@@ -108,7 +108,7 @@ func addProxies(t *target, srcp string) (res bool, err error) {
 		return false, err
 	}
 	for _, p := range proxies {
-		t.addProxy(p)
+		t.prePersistProxy(p)
 	}
 
 	return true, nil
@@ -154,6 +154,10 @@ func (i *Processor) Run() {
 		addGFWRules(t)
 	}(t)
 
-	wg.Wait()
-	t.persist(outp)
+	go func() {
+		wg.Wait()
+		t.finishNotifyPersist()
+	}()
+
+	t.consumePersistQ(outp)
 }
